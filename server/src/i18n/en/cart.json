@@ -1,0 +1,10 @@
+{
+  "item_added": "Item added to cart",
+  "item_updated": "Cart updated successfully",
+  "item_removed": "Item removed from cart",
+  "cart_cleared": "Cart cleared successfully",
+  "cart_empty": "Cart is empty",
+  "cart_not_found": "Cart not found",
+  "item_not_found": "Item not found in cart"
+}
+

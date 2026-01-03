@@ -1,0 +1,11 @@
+{
+  "product_created": "Thêm sản phẩm thành công",
+  "product_updated": "Cập nhật sản phẩm thành công",
+  "product_deleted": "Xóa sản phẩm thành công",
+  "product_not_found": "Sản phẩm không tồn tại",
+  "product_not_available": "Sản phẩm không khả dụng",
+  "insufficient_stock": "Không đủ hàng trong kho. Còn lại: {stock}",
+  "need_shop_first": "Bạn cần tạo shop trước",
+  "not_product_owner": "Bạn không phải chủ sản phẩm này"
+}
+

@@ -1,0 +1,10 @@
+{
+  "item_added": "Đã thêm vào giỏ hàng",
+  "item_updated": "Cập nhật giỏ hàng thành công",
+  "item_removed": "Đã xóa khỏi giỏ hàng",
+  "cart_cleared": "Đã xóa tất cả sản phẩm trong giỏ hàng",
+  "cart_empty": "Giỏ hàng trống",
+  "cart_not_found": "Giỏ hàng không tồn tại",
+  "item_not_found": "Sản phẩm không có trong giỏ hàng"
+}
+

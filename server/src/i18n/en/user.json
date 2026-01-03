@@ -1,0 +1,10 @@
+{
+  "profile_updated": "Profile updated successfully",
+  "user_not_found": "User not found",
+  "address_created": "Address created successfully",
+  "address_updated": "Address updated successfully",
+  "address_deleted": "Address deleted successfully",
+  "address_not_found": "Address not found",
+  "cannot_delete_only_address": "Cannot delete the only address"
+}
+

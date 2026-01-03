@@ -1,0 +1,9 @@
+{
+  "shop_created": "Tạo shop thành công",
+  "shop_updated": "Cập nhật shop thành công",
+  "shop_not_found": "Shop không tồn tại",
+  "already_has_shop": "Bạn đã có shop rồi",
+  "no_shop_yet": "Bạn chưa có shop",
+  "shop_name_required": "Tên shop là bắt buộc"
+}
+

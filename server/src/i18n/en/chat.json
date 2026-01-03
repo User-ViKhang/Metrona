@@ -1,0 +1,7 @@
+{
+  "message_sent": "Message sent successfully",
+  "chat_not_found": "Chat not found",
+  "not_participant": "You are not a participant of this chat",
+  "cannot_chat_own_shop": "Cannot chat with your own shop"
+}
+

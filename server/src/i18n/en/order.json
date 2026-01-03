@@ -1,0 +1,15 @@
+{
+  "order_created": "Order placed successfully",
+  "order_cancelled": "Order cancelled successfully",
+  "order_confirmed": "Order confirmed successfully",
+  "order_shipped": "Order is being shipped",
+  "order_delivered": "Order delivered successfully",
+  "order_completed": "Order completed",
+  "order_not_found": "Order not found",
+  "cannot_cancel": "Cannot cancel order at this stage",
+  "only_pending_can_cancel": "Only pending orders can be cancelled",
+  "not_delivered_yet": "Order has not been delivered yet",
+  "must_confirm_first": "Order must be confirmed first",
+  "must_ship_first": "Order must be shipped first"
+}
+

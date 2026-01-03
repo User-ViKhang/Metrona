@@ -1,0 +1,10 @@
+{
+  "profile_updated": "Cập nhật hồ sơ thành công",
+  "user_not_found": "Người dùng không tồn tại",
+  "address_created": "Thêm địa chỉ thành công",
+  "address_updated": "Cập nhật địa chỉ thành công",
+  "address_deleted": "Xóa địa chỉ thành công",
+  "address_not_found": "Địa chỉ không tồn tại",
+  "cannot_delete_only_address": "Không thể xóa địa chỉ duy nhất"
+}
+

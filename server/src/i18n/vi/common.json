@@ -1,0 +1,11 @@
+{
+  "success": "Thành công",
+  "error": "Lỗi",
+  "not_found": "Không tìm thấy",
+  "unauthorized": "Không có quyền truy cập",
+  "forbidden": "Bị cấm truy cập",
+  "bad_request": "Yêu cầu không hợp lệ",
+  "internal_error": "Lỗi hệ thống",
+  "validation_error": "Lỗi xác thực dữ liệu"
+}
+

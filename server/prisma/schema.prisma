@@ -1,0 +1,354 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// ==================== ENUMS ====================
+
+enum Role {
+  USER
+  SELLER
+  ADMIN
+}
+
+enum Language {
+  VI
+  EN
+}
+
+enum ProductStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  SHIPPING
+  DELIVERED
+  COMPLETED
+  CANCELLED
+  RETURN_REQUESTED
+  RETURNED
+}
+
+enum MessageType {
+  TEXT
+  IMAGE
+  SYSTEM
+}
+
+// ==================== USER & AUTH ====================
+
+model User {
+  id           String    @id @default(uuid())
+  email        String    @unique
+  password     String
+  name         String
+  phone        String?
+  avatar       String?
+  role         Role      @default(USER)
+  language     Language  @default(VI)
+  isActive     Boolean   @default(true)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  // Relations
+  shop         Shop?
+  cart         Cart?
+  orders       Order[]           @relation("BuyerOrders")
+  addresses    Address[]
+  refreshTokens RefreshToken[]
+  chatRooms    ChatParticipant[]
+  messages     Message[]
+
+  @@map("users")
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  token     String   @unique @db.VarChar(500)
+  userId    String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  // Relations
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("refresh_tokens")
+}
+
+model Address {
+  id           String   @id @default(uuid())
+  userId       String
+  fullName     String
+  phone        String
+  province     String
+  district     String
+  ward         String
+  addressLine  String
+  isDefault    Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relations
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  orders       Order[]
+
+  @@index([userId])
+  @@map("addresses")
+}
+
+// ==================== SHOP ====================
+
+model Shop {
+  id          String   @id @default(uuid())
+  name        String
+  description String?  @db.Text
+  logo        String?
+  banner      String?
+  ownerId     String   @unique
+  isActive    Boolean  @default(true)
+  rating      Float    @default(0)
+  totalSold   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  owner       User       @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  products    Product[]
+  orders      Order[]    @relation("ShopOrders")
+  chatRooms   ChatRoom[]
+
+  @@index([ownerId])
+  @@map("shops")
+}
+
+// ==================== PRODUCT ====================
+
+model Product {
+  id          String        @id @default(uuid())
+  name        String
+  description String?       @db.Text
+  price       Decimal       @db.Decimal(15, 2)
+  comparePrice Decimal?     @db.Decimal(15, 2) // Giá gốc trước giảm
+  stock       Int           @default(0)
+  sold        Int           @default(0)
+  shopId      String
+  status      ProductStatus @default(ACTIVE)
+  rating      Float         @default(0)
+  ratingCount Int           @default(0)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  // Relations
+  shop        Shop          @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  images      ProductImage[]
+  categories  ProductCategory[]
+  cartItems   CartItem[]
+  orderItems  OrderItem[]
+
+  @@index([shopId])
+  @@index([status])
+  @@map("products")
+}
+
+model ProductImage {
+  id        String   @id @default(uuid())
+  productId String
+  url       String
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+
+  // Relations
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([productId])
+  @@map("product_images")
+}
+
+model Category {
+  id        String   @id @default(uuid())
+  name      String
+  nameEn    String?
+  slug      String   @unique
+  parentId  String?
+  icon      String?
+  order     Int      @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  parent    Category?  @relation("CategoryHierarchy", fields: [parentId], references: [id])
+  children  Category[] @relation("CategoryHierarchy")
+  products  ProductCategory[]
+
+  @@index([parentId])
+  @@map("categories")
+}
+
+model ProductCategory {
+  productId  String
+  categoryId String
+
+  // Relations
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@id([productId, categoryId])
+  @@map("product_categories")
+}
+
+// ==================== CART ====================
+
+model Cart {
+  id        String     @id @default(uuid())
+  userId    String     @unique
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  // Relations
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items     CartItem[]
+
+  @@map("carts")
+}
+
+model CartItem {
+  id        String   @id @default(uuid())
+  cartId    String
+  productId String
+  quantity  Int      @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  cart      Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([cartId, productId])
+  @@index([cartId])
+  @@index([productId])
+  @@map("cart_items")
+}
+
+// ==================== ORDER ====================
+
+model Order {
+  id             String      @id @default(uuid())
+  orderNumber    String      @unique
+  buyerId        String
+  shopId         String
+  addressId      String
+  status         OrderStatus @default(PENDING)
+  subtotal       Decimal     @db.Decimal(15, 2)
+  shippingFee    Decimal     @db.Decimal(15, 2) @default(0)
+  discount       Decimal     @db.Decimal(15, 2) @default(0)
+  total          Decimal     @db.Decimal(15, 2)
+  note           String?     @db.Text
+  cancelReason   String?
+  cancelledAt    DateTime?
+  confirmedAt    DateTime?
+  shippedAt      DateTime?
+  deliveredAt    DateTime?
+  completedAt    DateTime?
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+
+  // Relations
+  buyer          User        @relation("BuyerOrders", fields: [buyerId], references: [id])
+  shop           Shop        @relation("ShopOrders", fields: [shopId], references: [id])
+  address        Address     @relation(fields: [addressId], references: [id])
+  items          OrderItem[]
+
+  @@index([buyerId])
+  @@index([shopId])
+  @@index([status])
+  @@index([orderNumber])
+  @@map("orders")
+}
+
+model OrderItem {
+  id         String   @id @default(uuid())
+  orderId    String
+  productId  String
+  name       String   // Snapshot tên sản phẩm
+  price      Decimal  @db.Decimal(15, 2) // Snapshot giá tại thời điểm mua
+  quantity   Int
+  total      Decimal  @db.Decimal(15, 2)
+  createdAt  DateTime @default(now())
+
+  // Relations
+  order      Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product    Product  @relation(fields: [productId], references: [id])
+
+  @@index([orderId])
+  @@index([productId])
+  @@map("order_items")
+}
+
+// ==================== CHAT ====================
+
+model ChatRoom {
+  id           String            @id @default(uuid())
+  shopId       String
+  lastMessage  String?
+  lastMessageAt DateTime?
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+
+  // Relations
+  shop         Shop              @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  participants ChatParticipant[]
+  messages     Message[]
+
+  @@index([shopId])
+  @@map("chat_rooms")
+}
+
+model ChatParticipant {
+  id         String   @id @default(uuid())
+  chatRoomId String
+  userId     String
+  unreadCount Int     @default(0)
+  joinedAt   DateTime @default(now())
+  lastReadAt DateTime @default(now())
+
+  // Relations
+  chatRoom   ChatRoom @relation(fields: [chatRoomId], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([chatRoomId, userId])
+  @@index([chatRoomId])
+  @@index([userId])
+  @@map("chat_participants")
+}
+
+model Message {
+  id         String      @id @default(uuid())
+  chatRoomId String
+  senderId   String
+  content    String      @db.Text
+  type       MessageType @default(TEXT)
+  isRead     Boolean     @default(false)
+  createdAt  DateTime    @default(now())
+
+  // Relations
+  chatRoom   ChatRoom    @relation(fields: [chatRoomId], references: [id], onDelete: Cascade)
+  sender     User        @relation(fields: [senderId], references: [id])
+
+  @@index([chatRoomId])
+  @@index([senderId])
+  @@index([createdAt])
+  @@map("messages")
+}
+

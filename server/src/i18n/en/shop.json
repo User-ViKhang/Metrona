@@ -1,0 +1,9 @@
+{
+  "shop_created": "Shop created successfully",
+  "shop_updated": "Shop updated successfully",
+  "shop_not_found": "Shop not found",
+  "already_has_shop": "You already have a shop",
+  "no_shop_yet": "You do not have a shop yet",
+  "shop_name_required": "Shop name is required"
+}
+

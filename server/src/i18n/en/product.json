@@ -1,0 +1,11 @@
+{
+  "product_created": "Product created successfully",
+  "product_updated": "Product updated successfully",
+  "product_deleted": "Product deleted successfully",
+  "product_not_found": "Product not found",
+  "product_not_available": "Product is not available",
+  "insufficient_stock": "Insufficient stock. Available: {stock}",
+  "need_shop_first": "You need to create a shop first",
+  "not_product_owner": "You do not own this product"
+}
+

@@ -1,0 +1,15 @@
+{
+  "order_created": "Đặt hàng thành công",
+  "order_cancelled": "Hủy đơn hàng thành công",
+  "order_confirmed": "Xác nhận đơn hàng thành công",
+  "order_shipped": "Đơn hàng đang được giao",
+  "order_delivered": "Đơn hàng đã giao thành công",
+  "order_completed": "Đơn hàng hoàn thành",
+  "order_not_found": "Đơn hàng không tồn tại",
+  "cannot_cancel": "Không thể hủy đơn hàng ở trạng thái này",
+  "only_pending_can_cancel": "Chỉ có thể hủy đơn hàng đang chờ xử lý",
+  "not_delivered_yet": "Đơn hàng chưa được giao",
+  "must_confirm_first": "Đơn hàng cần được xác nhận trước",
+  "must_ship_first": "Đơn hàng cần được vận chuyển trước"
+}
+
