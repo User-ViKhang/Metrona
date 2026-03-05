@@ -21,6 +21,7 @@ export class UsersService {
         language: true,
         createdAt: true,
         updatedAt: true,
+        isActive: true,
         shop: {
           select: {
             id: true,
