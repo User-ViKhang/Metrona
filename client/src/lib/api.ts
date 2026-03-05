@@ -114,6 +114,29 @@ class ApiClient {
     return data.data || data;
   }
 
+  // Order endpoints
+  async getOrders(params?: { status?: string; page?: number; limit?: number }) {
+    const queryString = params ? `?${new URLSearchParams(params as any)}` : '';
+    return this.request(`/orders${queryString}`);
+  }
+
+  async getOrderById(id: string) {
+    return this.request(`/orders/${id}`);
+  }
+
+  async cancelOrder(id: string, reason: string) {
+    return this.request(`/orders/${id}/cancel`, {
+      method: 'PATCH',
+      body: JSON.stringify({ reason }),
+    });
+  }
+
+  async confirmReceived(id: string) {
+    return this.request(`/orders/${id}/received`, {
+      method: 'PATCH',
+    });
+  }
+
   // Address endpoints
   async getAddresses() {
     return this.request('/users/me/addresses');
