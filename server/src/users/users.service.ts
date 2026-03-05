@@ -1,6 +1,8 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { UpdateUserDto, CreateAddressDto, UpdateAddressDto } from './dto';
+import { unlink } from 'fs/promises';
+import { join } from 'path';
 
 @Injectable()
 export class UsersService {
@@ -18,6 +20,7 @@ export class UsersService {
         role: true,
         language: true,
         createdAt: true,
+        updatedAt: true,
         shop: {
           select: {
             id: true,
@@ -47,6 +50,44 @@ export class UsersService {
         avatar: true,
         role: true,
         language: true,
+      },
+    });
+
+    return user;
+  }
+
+  async updateAvatar(userId: string, avatarUrl: string) {
+    // Get current user to check for old avatar
+    const currentUser = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: { avatar: true },
+    });
+
+    // Delete old avatar file if exists
+    if (currentUser?.avatar) {
+      try {
+        const oldFilePath = join(process.cwd(), currentUser.avatar.replace(/^\//, ''));
+        await unlink(oldFilePath);
+      } catch (error) {
+        // Ignore error if file doesn't exist
+        console.log('Could not delete old avatar:', error.message);
+      }
+    }
+
+    // Update user with new avatar
+    const user = await this.prisma.user.update({
+      where: { id: userId },
+      data: { avatar: avatarUrl },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        phone: true,
+        avatar: true,
+        role: true,
+        language: true,
+        createdAt: true,
+        updatedAt: true,
       },
     });
 

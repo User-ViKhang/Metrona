@@ -41,3 +41,6 @@ temp/
 # OS
 Thumbs.db
 
+# Uploads (keep folder structure but ignore uploaded files)
+uploads/**/*
+!uploads/**/.gitkeep
