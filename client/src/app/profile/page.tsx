@@ -9,9 +9,12 @@ import OrdersView from '@/components/profile/OrdersView';
 import NotificationsView from '@/components/profile/NotificationsView';
 import FavoritesView from '@/components/profile/FavoritesView';
 import AddressList from '@/components/profile/AddressList';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function ProfilePage() {
   const [activeView, setActiveView] = useState('profile');
+  const [avatarError, setAvatarError] = useState(false);
+  const { user } = useAuth();
 
   const renderContent = () => {
     switch (activeView) {
@@ -61,7 +64,48 @@ export default function ProfilePage() {
         <main className="container mx-auto px-4 py-6">
           <div className="grid grid-cols-12 gap-6">
             {/* Sidebar */}
-            <div className="col-span-3">
+            <div className="col-span-3 space-y-4">
+              {/* Avatar Section */}
+              {user && (
+                <div className="bg-[#FFFFFF] rounded-lg shadow-sm p-6">
+                  <div className="flex flex-col items-center">
+                    <div className="relative group mb-4">
+                      <div className="w-24 h-24 rounded-full bg-gradient-to-br from-[#F97316] to-[#EA580C] flex items-center justify-center overflow-hidden text-[#FFFFFF]">
+                        {user.avatar && !avatarError ? (
+                          <img 
+                            src={user.avatar} 
+                            alt={user.name} 
+                            className="w-full h-full object-cover"
+                            onError={() => setAvatarError(true)}
+                          />
+                        ) : (
+                          <svg className="w-14 h-14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                          </svg>
+                        )}
+                      </div>
+                      <button
+                        type="button"
+                        className="absolute bottom-0 right-0 w-8 h-8 bg-[#F97316] text-[#FFFFFF] rounded-full flex items-center justify-center hover:bg-[#EA580C] transition-colors cursor-pointer shadow-lg border-2 border-[#FFFFFF]"
+                        title="Chỉnh sửa ảnh đại diện"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                        </svg>
+                      </button>
+                    </div>
+                    <h3 className="text-lg font-semibold text-[#0F172A] mb-2 text-center">{user.name}</h3>
+                    <span className={`${
+                      user.role === 'SELLER' ? 'bg-[#F97316]' : 
+                      user.role === 'ADMIN' ? 'bg-[#EF4444]' : 'bg-[#2563EB]'
+                    } text-[#FFFFFF] text-xs px-3 py-1 rounded-full`}>
+                      {user.role === 'SELLER' ? 'Nhà bán hàng' : 
+                       user.role === 'ADMIN' ? 'Quản trị viên' : 'Người mua hàng'}
+                    </span>
+                  </div>
+                </div>
+              )}
+              
               <ProfileSidebar activeView={activeView} onViewChange={setActiveView} />
             </div>
 

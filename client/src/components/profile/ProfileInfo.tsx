@@ -105,49 +105,6 @@ export default function ProfileInfo() {
         <h2 className="text-lg font-semibold text-[#0F172A] mb-6">Thông tin cá nhân</h2>
         
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Avatar Section */}
-          <div className="flex items-center gap-6 pb-6 border-b border-[#E5E7EB]">
-            <div className="w-24 h-24 rounded-full bg-gradient-to-br from-[#F97316] to-[#EA580C] flex items-center justify-center overflow-hidden text-[#FFFFFF]">
-              {user.avatar ? (
-                <img 
-                  src={user.avatar} 
-                  alt={user.name} 
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    e.currentTarget.style.display = 'none';
-                    e.currentTarget.parentElement!.innerHTML = '<svg class="w-14 h-14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>';
-                  }}
-                />
-              ) : (
-                <svg className="w-14 h-14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                </svg>
-              )}
-            </div>
-            <div className="flex-1">
-              <h3 className="text-base font-medium text-[#0F172A] mb-1">{user.name}</h3>
-              <div className="flex items-center gap-2">
-                <span className={`${
-                  user.role === 'SELLER' ? 'bg-[#F97316]' : 
-                  user.role === 'ADMIN' ? 'bg-[#EF4444]' : 'bg-[#2563EB]'
-                } text-[#FFFFFF] text-xs px-2 py-1 rounded-full`}>
-                  {user.role === 'SELLER' ? 'Nhà bán hàng' : 
-                   user.role === 'ADMIN' ? 'Quản trị viên' : 'Người mua hàng'}
-                </span>
-              </div>
-            </div>
-            <div>
-              <button
-                type="button"
-                className="px-4 py-2 bg-[#F97316] text-[#FFFFFF] rounded-md text-sm font-medium hover:bg-[#EA580C] transition-colors cursor-pointer"
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                </svg>
-              </button>
-            </div>
-          </div>
-
           {errors.general && (
             <div className="p-3 bg-[#FEE2E2] border border-[#EF4444] rounded-sm">
               <p className="text-sm text-[#EF4444]">{errors.general}</p>
