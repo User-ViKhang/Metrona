@@ -8,7 +8,7 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 }
 
 const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({ label, error, className = '', type, ...props }, ref) => {
+  ({ label, error, className = '', type, value, ...props }, ref) => {
     const [showPassword, setShowPassword] = useState(false);
     const isPassword = type === 'password';
     const inputType = isPassword && showPassword ? 'text' : type;
@@ -24,6 +24,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
           <input
             ref={ref}
             type={inputType}
+            value={value || ''}
             className={`w-full px-4 py-3 border rounded-sm text-sm transition-colors text-[#0F172A]
               ${error 
                 ? 'border-[#EF4444] focus:border-[#EF4444]' 
