@@ -1,0 +1,89 @@
+@import "tailwindcss";
+
+:root {
+  /* Brand Colors */
+  --brand-orange: #F97316;
+  --brand-orange-hover: #EA580C;
+  --brand-orange-soft: #FFEDD5;
+  --brand-blue: #2563EB;
+  --brand-blue-hover: #1D4ED8;
+  --brand-blue-soft: #DBEAFE;
+  
+  /* Background Colors */
+  --bg-main: #F8FAFC;
+  --bg-surface: #FFFFFF;
+  --bg-muted: #F1F5F9;
+  
+  /* Border Colors */
+  --border-light: #E5E7EB;
+  
+  /* Text Colors */
+  --text-primary: #0F172A;
+  --text-secondary: #475569;
+  --text-muted: #94A3B8;
+  --text-inverse: #FFFFFF;
+  
+  /* Status Colors */
+  --success-green: #22C55E;
+  --success-green-soft: #DCFCE7;
+  --error-red: #EF4444;
+  --error-red-soft: #FEE2E2;
+  --warning-yellow: #FACC15;
+  --warning-yellow-soft: #FEF9C3;
+  --info-blue: #38BDF8;
+  --info-blue-soft: #E0F2FE;
+}
+
+@theme inline {
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  
+  /* Custom color utilities */
+  --color-brand-orange: var(--brand-orange);
+  --color-brand-orange-hover: var(--brand-orange-hover);
+  --color-brand-orange-soft: var(--brand-orange-soft);
+  --color-brand-blue: var(--brand-blue);
+  --color-brand-blue-hover: var(--brand-blue-hover);
+  --color-brand-blue-soft: var(--brand-blue-soft);
+  
+  --color-bg-main: var(--bg-main);
+  --color-bg-surface: var(--bg-surface);
+  --color-bg-muted: var(--bg-muted);
+  
+  --color-border-light: var(--border-light);
+  
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+  --color-text-inverse: var(--text-inverse);
+  
+  --color-success: var(--success-green);
+  --color-success-soft: var(--success-green-soft);
+  --color-error: var(--error-red);
+  --color-error-soft: var(--error-red-soft);
+  --color-warning: var(--warning-yellow);
+  --color-warning-soft: var(--warning-yellow-soft);
+  --color-info: var(--info-blue);
+  --color-info-soft: var(--info-blue-soft);
+}
+
+body {
+  background: var(--bg-main);
+  color: var(--text-primary);
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+}
+
+@keyframes slide-in {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.animate-slide-in {
+  animation: slide-in 0.3s ease-out;
+}

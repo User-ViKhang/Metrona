@@ -1,0 +1,301 @@
+//// ------------------------------------------------------
+//// THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+//// ------------------------------------------------------
+
+Table users {
+  id String [pk]
+  email String [unique, not null]
+  password String [not null]
+  name String [not null]
+  phone String
+  avatar String
+  role Role [not null, default: 'USER']
+  language Language [not null, default: 'VI']
+  isActive Boolean [not null, default: true]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  shop shops
+  cart carts
+  orders orders [not null]
+  addresses addresses [not null]
+  refreshTokens refresh_tokens [not null]
+  chatRooms chat_participants [not null]
+  messages messages [not null]
+}
+
+Table refresh_tokens {
+  id String [pk]
+  token String [unique, not null]
+  userId String [not null]
+  expiresAt DateTime [not null]
+  createdAt DateTime [default: `now()`, not null]
+  user users [not null]
+}
+
+Table addresses {
+  id String [pk]
+  userId String [not null]
+  fullName String [not null]
+  phone String [not null]
+  province String [not null]
+  district String [not null]
+  ward String [not null]
+  addressLine String [not null]
+  isDefault Boolean [not null, default: false]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  user users [not null]
+  orders orders [not null]
+}
+
+Table shops {
+  id String [pk]
+  name String [not null]
+  description String
+  logo String
+  banner String
+  ownerId String [unique, not null]
+  isActive Boolean [not null, default: true]
+  rating Float [not null, default: 0]
+  totalSold Int [not null, default: 0]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  owner users [not null]
+  products products [not null]
+  orders orders [not null]
+  chatRooms chat_rooms [not null]
+}
+
+Table products {
+  id String [pk]
+  name String [not null]
+  description String
+  price Decimal [not null]
+  comparePrice Decimal
+  stock Int [not null, default: 0]
+  sold Int [not null, default: 0]
+  shopId String [not null]
+  status ProductStatus [not null, default: 'ACTIVE']
+  rating Float [not null, default: 0]
+  ratingCount Int [not null, default: 0]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  shop shops [not null]
+  images product_images [not null]
+  categories product_categories [not null]
+  cartItems cart_items [not null]
+  orderItems order_items [not null]
+}
+
+Table product_images {
+  id String [pk]
+  productId String [not null]
+  url String [not null]
+  order Int [not null, default: 0]
+  createdAt DateTime [default: `now()`, not null]
+  product products [not null]
+}
+
+Table categories {
+  id String [pk]
+  name String [not null]
+  nameEn String
+  slug String [unique, not null]
+  parentId String
+  icon String
+  order Int [not null, default: 0]
+  isActive Boolean [not null, default: true]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  parent categories
+  children categories [not null]
+  products product_categories [not null]
+}
+
+Table product_categories {
+  productId String [not null]
+  categoryId String [not null]
+  product products [not null]
+  category categories [not null]
+
+  indexes {
+    (productId, categoryId) [pk]
+  }
+}
+
+Table carts {
+  id String [pk]
+  userId String [unique, not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  user users [not null]
+  items cart_items [not null]
+}
+
+Table cart_items {
+  id String [pk]
+  cartId String [not null]
+  productId String [not null]
+  quantity Int [not null, default: 1]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  cart carts [not null]
+  product products [not null]
+
+  indexes {
+    (cartId, productId) [unique]
+  }
+}
+
+Table orders {
+  id String [pk]
+  orderNumber String [unique, not null]
+  buyerId String [not null]
+  shopId String [not null]
+  addressId String [not null]
+  status OrderStatus [not null, default: 'PENDING']
+  subtotal Decimal [not null]
+  shippingFee Decimal [not null, default: 0]
+  discount Decimal [not null, default: 0]
+  total Decimal [not null]
+  note String
+  cancelReason String
+  cancelledAt DateTime
+  confirmedAt DateTime
+  shippedAt DateTime
+  deliveredAt DateTime
+  completedAt DateTime
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  buyer users [not null]
+  shop shops [not null]
+  address addresses [not null]
+  items order_items [not null]
+}
+
+Table order_items {
+  id String [pk]
+  orderId String [not null]
+  productId String [not null]
+  name String [not null]
+  price Decimal [not null]
+  quantity Int [not null]
+  total Decimal [not null]
+  createdAt DateTime [default: `now()`, not null]
+  order orders [not null]
+  product products [not null]
+}
+
+Table chat_rooms {
+  id String [pk]
+  shopId String [not null]
+  lastMessage String
+  lastMessageAt DateTime
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  shop shops [not null]
+  participants chat_participants [not null]
+  messages messages [not null]
+}
+
+Table chat_participants {
+  id String [pk]
+  chatRoomId String [not null]
+  userId String [not null]
+  unreadCount Int [not null, default: 0]
+  joinedAt DateTime [default: `now()`, not null]
+  lastReadAt DateTime [default: `now()`, not null]
+  chatRoom chat_rooms [not null]
+  user users [not null]
+
+  indexes {
+    (chatRoomId, userId) [unique]
+  }
+}
+
+Table messages {
+  id String [pk]
+  chatRoomId String [not null]
+  senderId String [not null]
+  content String [not null]
+  type MessageType [not null, default: 'TEXT']
+  isRead Boolean [not null, default: false]
+  createdAt DateTime [default: `now()`, not null]
+  chatRoom chat_rooms [not null]
+  sender users [not null]
+}
+
+Enum Role {
+  USER
+  SELLER
+  ADMIN
+}
+
+Enum Language {
+  VI
+  EN
+}
+
+Enum ProductStatus {
+  ACTIVE
+  INACTIVE
+}
+
+Enum OrderStatus {
+  PENDING
+  CONFIRMED
+  SHIPPING
+  DELIVERED
+  COMPLETED
+  CANCELLED
+  RETURN_REQUESTED
+  RETURNED
+}
+
+Enum MessageType {
+  TEXT
+  IMAGE
+  SYSTEM
+}
+
+Ref: refresh_tokens.userId > users.id [delete: Cascade]
+
+Ref: addresses.userId > users.id [delete: Cascade]
+
+Ref: shops.ownerId - users.id [delete: Cascade]
+
+Ref: products.shopId > shops.id [delete: Cascade]
+
+Ref: product_images.productId > products.id [delete: Cascade]
+
+Ref: categories.parentId - categories.id
+
+Ref: product_categories.productId > products.id [delete: Cascade]
+
+Ref: product_categories.categoryId > categories.id [delete: Cascade]
+
+Ref: carts.userId - users.id [delete: Cascade]
+
+Ref: cart_items.cartId > carts.id [delete: Cascade]
+
+Ref: cart_items.productId > products.id [delete: Cascade]
+
+Ref: orders.buyerId > users.id
+
+Ref: orders.shopId > shops.id
+
+Ref: orders.addressId > addresses.id
+
+Ref: order_items.orderId > orders.id [delete: Cascade]
+
+Ref: order_items.productId > products.id
+
+Ref: chat_rooms.shopId > shops.id [delete: Cascade]
+
+Ref: chat_participants.chatRoomId > chat_rooms.id [delete: Cascade]
+
+Ref: chat_participants.userId > users.id [delete: Cascade]
+
+Ref: messages.chatRoomId > chat_rooms.id [delete: Cascade]
+
+Ref: messages.senderId > users.id
