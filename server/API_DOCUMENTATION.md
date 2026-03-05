@@ -21,19 +21,28 @@
 
 ### 2️⃣ USER - Quản lý người dùng
 
-| Method | Endpoint                          | Description           | Auth         
-|--------|-----------------------------------|-----------------------|------------        
-| GET    | `/users/me`                       | Lấy thông tin profile | ✅ Required 
-| PUT    | `/users/me`                       | Cập nhật profile      | ✅ Required 
-| GET    | `/users/me/addresses`             | Lấy danh sách địa chỉ | ✅ Required 
-| POST   | `/users/me/addresses`             | Thêm địa chỉ mới      | ✅ Required 
-| PUT    | `/users/me/addresses/:id`         | Cập nhật địa chỉ      | ✅ Required 
-| DELETE | `/users/me/addresses/:id`         | Xóa địa chỉ           | ✅ Required 
-| PATCH  | `/users/me/addresses/:id/default` | Đặt địa chỉ mặc định  | ✅ Required 
+| Method | Endpoint        | Description           | Auth         
+|--------|-----------------|-----------------------|------------        
+| GET    | `/users/me`     | Lấy thông tin profile | ✅ Required 
+| PUT    | `/users/me`     | Cập nhật profile      | ✅ Required
 
 ---
 
-### 3️⃣ SHOP - Quản lý Shop
+### 3️⃣ ADDRESS - Quản lý địa chỉ
+
+| Method | Endpoint                 | Description           | Auth         
+|--------|-------------------------|-----------------------|------------        
+| GET    | `/addresses`            | Lấy danh sách địa chỉ | ✅ Required 
+| GET    | `/addresses/default`    | Lấy địa chỉ mặc định  | ✅ Required 
+| GET    | `/addresses/:id`        | Lấy chi tiết địa chỉ  | ✅ Required 
+| POST   | `/addresses`            | Thêm địa chỉ mới      | ✅ Required 
+| PUT    | `/addresses/:id`        | Cập nhật địa chỉ      | ✅ Required 
+| PATCH  | `/addresses/:id/default`| Đặt địa chỉ mặc định  | ✅ Required 
+| DELETE | `/addresses/:id`        | Xóa địa chỉ           | ✅ Required 
+
+---
+
+### 4️⃣ SHOP - Quản lý Shop
 
 | Method | Endpoint                   | Description                | Auth         
 |--------|----------------------------|----------------------------|------------        
@@ -46,7 +55,7 @@
 
 ---
 
-### 4️⃣ PRODUCT - Sản phẩm
+### 5️⃣ PRODUCT - Sản phẩm
 
 | Method | Endpoint        | Description        | Auth         
 |--------|-----------------|--------------------|-----------        
@@ -69,7 +78,7 @@
 
 ---
 
-### 5️⃣ CART - Giỏ hàng
+### 6️⃣ CART - Giỏ hàng
 
 | Method | Endpoint          | Description            | Auth         
 |--------|-------------------|------------------------|-----------        
@@ -82,7 +91,7 @@
 
 ---
 
-### 6️⃣ ORDER - Đơn hàng (Buyer)
+### 7️⃣ ORDER - Đơn hàng (Buyer)
 
 | Method | Endpoint               | Description                | Auth         
 |--------|------------------------|----------------------------|-----------        
@@ -94,7 +103,7 @@
 
 ---
 
-### 7️⃣ SELLER ORDER - Đơn hàng (Seller)
+### 8️⃣ SELLER ORDER - Đơn hàng (Seller)
 
 | Method | Endpoint                      | Description                 | Auth         
 |--------|-------------------------------|-----------------------------|----------        
@@ -108,7 +117,7 @@
 
 ---
 
-### 8️⃣ CHAT - Nhắn tin
+### 9️⃣ CHAT - Nhắn tin
 
 | Method | Endpoint              | Description                | Auth         
 |--------|-----------------------|----------------------------|-----------        
@@ -121,7 +130,7 @@
 
 ---
 
-### 9️⃣ WEBSOCKET - Chat Realtime
+### 🔟 WEBSOCKET - Chat Realtime
 
 **Namespace:** `/chat`
 
@@ -136,6 +145,24 @@
 | `chat:typing`       | Bidirectional    | Trạng thái đang nhập 
 | `chat:read`         | Bidirectional    | Đánh dấu đã đọc 
 | `chat:notification` | Server → Client  | Thông báo tin nhắn mới
+
+---
+
+### ADDRESSES - Địa chỉ (address)
+
+**Namespace:** `/addresses`
+
+**Events:**
+
+| Method | Endpoint                 | Description           | Auth         |
+|--------|-------------------------|-----------------------|--------------|
+| GET    | `/addresses`            | Lấy danh sách địa chỉ | ✅ Required  |
+| GET    | `/addresses/default`    | Lấy địa chỉ mặc định  | ✅ Required  |
+| GET    | `/addresses/:id`        | Lấy chi tiết địa chỉ  | ✅ Required  |
+| POST   | `/addresses`            | Thêm địa chỉ mới      | ✅ Required  |
+| PUT    | `/addresses/:id`        | Cập nhật địa chỉ      | ✅ Required  |
+| PATCH  | `/addresses/:id/default`| Đặt địa chỉ mặc định  | ✅ Required  |
+| DELETE | `/addresses/:id`        | Xóa địa chỉ           | ✅ Required  |
 
 ---
 
@@ -265,6 +292,12 @@ src/
 │   ├── users.controller.ts
 │   ├── users.service.ts
 │   └── users.module.ts
+│
+├── addresses/          # Address management
+│   ├── dto/
+│   ├── addresses.controller.ts
+│   ├── addresses.service.ts
+│   └── addresses.module.ts
 │
 ├── shops/              # Shop management
 │   ├── dto/

@@ -11,7 +11,7 @@ interface Address {
   id: string;
   fullName: string;
   phone: string;
-  address: string;
+  addressLine: string;
   ward: string;
   district: string;
   province: string;
@@ -21,7 +21,7 @@ interface Address {
 interface AddressFormData {
   fullName: string;
   phone: string;
-  address: string;
+  addressLine: string;
   ward: string;
   province: string;
 }
@@ -49,10 +49,11 @@ export default function AddressList() {
   const [formData, setFormData] = useState<AddressFormData>({
     fullName: '',
     phone: '',
-    address: '',
+    addressLine: '',
     ward: '',
     province: ''
   });
+  const [isDefault, setIsDefault] = useState(false);
   const [provinces, setProvinces] = useState<Province[]>([]);
   const [wards, setWards] = useState<Ward[]>([]);
   const [loadingWards, setLoadingWards] = useState(false);
@@ -161,27 +162,39 @@ export default function AddressList() {
 
   const handleAddNew = () => {
     setEditingId(null);
+    setIsDefault(false);
     setFormData({
       fullName: '',
       phone: '',
-      address: '',
+      addressLine: '',
       ward: '',
       province: ''
     });
+    setWards([]);
     setShowFormModal(true);
   };
 
-  const handleEdit = (address: Address) => {
+  const handleEdit = async (address: Address) => {
     setEditingId(address.id);
+    setIsDefault(address.isDefault);
+    
     // Tìm code của tỉnh từ tên
     const province = provinces.find(p => p.name === address.province);
+    const provinceCode = province ? province.code.toString() : '';
+    
     setFormData({
       fullName: address.fullName,
       phone: address.phone,
-      address: address.address,
+      addressLine: address.addressLine,
       ward: address.ward,
-      province: province ? province.code.toString() : ''
+      province: provinceCode
     });
+    
+    // Load wards for the selected province
+    if (provinceCode) {
+      await loadWards(provinceCode);
+    }
+    
     setShowFormModal(true);
   };
 
@@ -203,10 +216,11 @@ export default function AddressList() {
       const dataToSubmit = {
         fullName: formData.fullName,
         phone: formData.phone,
-        address: formData.address,
+        addressLine: formData.addressLine,
         ward: formData.ward,
-        district: 'không tồn tại',
-        province: provinceName
+        district: 'Quận/Huyện',
+        province: provinceName,
+        isDefault: isDefault
       };
       
       if (editingId) {
@@ -284,8 +298,8 @@ export default function AddressList() {
                 Địa chỉ <span className="text-[#EF4444]">*</span>
               </label>
               <Input
-                name="address"
-                value={formData.address}
+                name="addressLine"
+                value={formData.addressLine}
                 onChange={handleFormChange}
                 required
                 placeholder="Số nhà, tên đường"
@@ -336,14 +350,18 @@ export default function AddressList() {
               </div>
             </div>
 
-            {/* Icon giao hàng */}
-            <div className="flex items-center justify-center py-4 border-t border-[#E5E7EB]">
-              <div className="text-center">
-                <svg className="w-16 h-16 mx-auto text-[#F97316] mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0" />
-                </svg>
-                <p className="text-sm text-[#94A3B8]">Giao hàng toàn quốc</p>
-              </div>
+            {/* Checkbox Địa chỉ mặc định */}
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                id="isDefault"
+                checked={isDefault}
+                onChange={(e) => setIsDefault(e.target.checked)}
+                className="w-4 h-4 text-[#F97316] border-[#E5E7EB] rounded focus:ring-[#F97316] cursor-pointer"
+              />
+              <label htmlFor="isDefault" className="text-sm text-[#475569] cursor-pointer">
+                Đặt làm địa chỉ mặc định
+              </label>
             </div>
 
             <div className="flex gap-3 justify-end pt-4 border-t border-[#E5E7EB]">
@@ -376,7 +394,7 @@ export default function AddressList() {
       <div className="bg-[#FFFFFF] rounded-lg shadow-sm p-6">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-lg font-semibold text-[#0F172A]">Địa Chỉ Của Tôi</h2>
-          <Button variant="primary" onClick={handleAddNew}>
+          <Button variant="primary" onClick={handleAddNew} className="cursor-pointer">
             + Thêm Địa Chỉ Mới
           </Button>
         </div>
@@ -394,10 +412,10 @@ export default function AddressList() {
             {addresses.map((address) => (
               <div
                 key={address.id}
-                className="border border-[#E5E7EB] rounded-lg p-4 hover:border-[#F97316] transition-colors"
+                className="group border border-[#E5E7EB] rounded-lg overflow-hidden hover:border-[#F97316] hover:shadow-md transition-all duration-200"
               >
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
+                <div className="flex items-stretch">
+                  <div className="flex-1 p-4">
                     <div className="flex items-center gap-2 mb-2">
                       <span className="font-medium text-[#0F172A]">{address.fullName}</span>
                       <span className="text-[#94A3B8]">|</span>
@@ -408,31 +426,47 @@ export default function AddressList() {
                         </span>
                       )}
                     </div>
-                    <p className="text-sm text-[#475569] mb-1">{address.address}</p>
+                    <p className="text-sm text-[#475569] mb-1">{address.addressLine}</p>
                     <p className="text-sm text-[#94A3B8]">
-                      {address.ward}, {address.district}, {address.province}
+                      {address.ward}, {address.province}
                     </p>
                   </div>
-                  <div className="flex flex-col gap-2 ml-4">
+                  
+                  {/* Action Buttons - Slide in from right */}
+                  <div className="flex items-stretch gap-px">
                     <button
                       onClick={() => handleEdit(address)}
-                      className="text-sm text-[#2563EB] hover:text-[#1D4ED8]"
+                      className="flex items-center justify-center gap-1.5 px-4 text-sm text-white bg-[#2563EB] hover:bg-[#1D4ED8] transition-all duration-300 w-0 group-hover:w-24 overflow-hidden whitespace-nowrap opacity-0 group-hover:opacity-100"
+                      title="Cập nhật"
                     >
-                      Cập nhật
+                      <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                      </svg>
+                      <span>Sửa</span>
                     </button>
+                    
                     {!address.isDefault && (
                       <>
                         <button
-                          onClick={() => handleDeleteClick(address.id)}
-                          className="text-sm text-[#EF4444] hover:text-[#DC2626]"
-                        >
-                          Xóa
-                        </button>
-                        <button
                           onClick={() => handleSetDefault(address.id)}
-                          className="text-sm text-[#F97316] hover:text-[#EA580C]"
+                          className="flex items-center justify-center gap-1.5 px-4 text-sm text-white bg-[#F97316] hover:bg-[#EA580C] transition-all duration-300 w-0 group-hover:w-32 overflow-hidden whitespace-nowrap opacity-0 group-hover:opacity-100"
+                          title="Đặt làm mặc định"
                         >
-                          Đặt mặc định
+                          <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                          </svg>
+                          <span>Mặc định</span>
+                        </button>
+                        
+                        <button
+                          onClick={() => handleDeleteClick(address.id)}
+                          className="flex items-center justify-center gap-1.5 px-4 text-sm text-white bg-[#EF4444] hover:bg-[#DC2626] transition-all duration-300 w-0 group-hover:w-24 overflow-hidden whitespace-nowrap opacity-0 group-hover:opacity-100"
+                          title="Xóa địa chỉ"
+                        >
+                          <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                          </svg>
+                          <span>Xóa</span>
                         </button>
                       </>
                     )}

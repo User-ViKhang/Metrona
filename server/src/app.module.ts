@@ -16,6 +16,7 @@ import { ProductsModule } from './products/products.module';
 import { CartModule } from './cart/cart.module';
 import { OrdersModule } from './orders/orders.module';
 import { ChatsModule } from './chats/chats.module';
+import { AddressesModule } from './addresses/addresses.module';
 
 // Common
 import { JwtAuthGuard, RolesGuard } from './common/guards';
@@ -62,6 +63,7 @@ import { AppService } from './app.service';
     CartModule,
     OrdersModule,
     ChatsModule,
+    AddressesModule,
   ],
   controllers: [AppController],
   providers: [
