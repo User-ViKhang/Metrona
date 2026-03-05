@@ -13,6 +13,8 @@ export default function Header() {
   const [searchQuery, setSearchQuery] = useState('');
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [viewMode, setViewMode] = useState<'buyer' | 'seller'>('buyer');
+  const [avatarError, setAvatarError] = useState(false);
+  const [menuAvatarError, setMenuAvatarError] = useState(false);
 
   const handleLogout = async () => {
     await logout();
@@ -154,15 +156,12 @@ export default function Header() {
                   >
                     {/* Avatar */}
                     <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#F97316] to-[#EA580C] flex items-center justify-center text-[#FFFFFF] font-bold text-sm overflow-hidden">
-                      {user.avatar ? (
+                      {user.avatar && !avatarError ? (
                         <img 
-                          src={user.avatar} 
+                          src={`http://localhost:3000${user.avatar}`}
                           alt={user.name} 
                           className="w-full h-full object-cover"
-                          onError={(e) => {
-                            e.currentTarget.style.display = 'none';
-                            e.currentTarget.parentElement!.innerHTML = '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>';
-                          }}
+                          onError={() => setAvatarError(true)}
                         />
                       ) : (
                         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -188,15 +187,12 @@ export default function Header() {
                       <div className="px-4 py-3 border-b border-[#E5E7EB]">
                         <div className="flex items-center gap-3">
                           <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#F97316] to-[#EA580C] flex items-center justify-center text-[#FFFFFF] font-bold overflow-hidden">
-                            {user.avatar ? (
+                            {user.avatar && !menuAvatarError ? (
                               <img 
-                                src={user.avatar} 
+                                src={`http://localhost:3000${user.avatar}`}
                                 alt={user.name} 
                                 className="w-full h-full object-cover"
-                                onError={(e) => {
-                                  e.currentTarget.style.display = 'none';
-                                  e.currentTarget.parentElement!.innerHTML = '<svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>';
-                                }}
+                                onError={() => setMenuAvatarError(true)}
                               />
                             ) : (
                               <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">

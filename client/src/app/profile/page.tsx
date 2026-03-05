@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import Header from '@/components/layout/Header';
 import ProfileSidebar from '@/components/profile/ProfileSidebar';
@@ -9,12 +9,63 @@ import OrdersView from '@/components/profile/OrdersView';
 import NotificationsView from '@/components/profile/NotificationsView';
 import FavoritesView from '@/components/profile/FavoritesView';
 import AddressList from '@/components/profile/AddressList';
+import Toast from '@/components/ui/Toast';
 import { useAuth } from '@/contexts/AuthContext';
+import { api } from '@/lib/api';
 
 export default function ProfilePage() {
   const [activeView, setActiveView] = useState('profile');
   const [avatarError, setAvatarError] = useState(false);
-  const { user } = useAuth();
+  const [isUploading, setIsUploading] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+  const [toastType, setToastType] = useState<'success' | 'error'>('success');
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { user, refreshProfile } = useAuth();
+
+  const handleAvatarClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.match(/^image\/(jpg|jpeg|png|gif|webp)$/)) {
+      setToastMessage('Chỉ chấp nhận file ảnh (JPG, PNG, GIF, WEBP)');
+      setToastType('error');
+      setShowToast(true);
+      return;
+    }
+
+    // Validate file size (5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      setToastMessage('Kích thước file không được vượt quá 5MB');
+      setToastType('error');
+      setShowToast(true);
+      return;
+    }
+
+    setIsUploading(true);
+    try {
+      await api.uploadAvatar(file);
+      await refreshProfile();
+      setAvatarError(false);
+      setToastMessage('Cập nhật ảnh đại diện thành công!');
+      setToastType('success');
+      setShowToast(true);
+    } catch (error: any) {
+      setToastMessage(error.message || 'Không thể tải ảnh lên. Vui lòng thử lại.');
+      setToastType('error');
+      setShowToast(true);
+    } finally {
+      setIsUploading(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
+  };
 
   const renderContent = () => {
     switch (activeView) {
@@ -36,6 +87,14 @@ export default function ProfilePage() {
   return (
     <ProtectedRoute>
       <div className="min-h-screen bg-[#F8FAFC]">
+        {showToast && (
+          <Toast
+            message={toastMessage}
+            type={toastType}
+            onClose={() => setShowToast(false)}
+          />
+        )}
+        
         <Header />
         
         {/* Breadcrumb */}
@@ -69,11 +128,18 @@ export default function ProfilePage() {
               {user && (
                 <div className="bg-[#FFFFFF] rounded-lg shadow-sm p-6">
                   <div className="flex flex-col items-center">
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
+                      onChange={handleFileChange}
+                      className="hidden"
+                    />
                     <div className="relative group mb-4">
                       <div className="w-24 h-24 rounded-full bg-gradient-to-br from-[#F97316] to-[#EA580C] flex items-center justify-center overflow-hidden text-[#FFFFFF]">
                         {user.avatar && !avatarError ? (
                           <img 
-                            src={user.avatar} 
+                            src={`http://localhost:3000${user.avatar}`}
                             alt={user.name} 
                             className="w-full h-full object-cover"
                             onError={() => setAvatarError(true)}
@@ -83,10 +149,17 @@ export default function ProfilePage() {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                           </svg>
                         )}
+                        {isUploading && (
+                          <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
+                          </div>
+                        )}
                       </div>
                       <button
                         type="button"
-                        className="absolute bottom-0 right-0 w-8 h-8 bg-[#F97316] text-[#FFFFFF] rounded-full flex items-center justify-center hover:bg-[#EA580C] transition-colors cursor-pointer shadow-lg border-2 border-[#FFFFFF]"
+                        onClick={handleAvatarClick}
+                        disabled={isUploading}
+                        className="absolute bottom-0 right-0 w-8 h-8 bg-[#F97316] text-[#FFFFFF] rounded-full flex items-center justify-center hover:bg-[#EA580C] transition-colors cursor-pointer shadow-lg border-2 border-[#FFFFFF] disabled:opacity-50 disabled:cursor-not-allowed"
                         title="Chỉnh sửa ảnh đại diện"
                       >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

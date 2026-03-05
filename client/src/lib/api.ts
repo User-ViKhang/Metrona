@@ -90,6 +90,30 @@ class ApiClient {
     });
   }
 
+  async uploadAvatar(file: File) {
+    const url = `${this.baseURL}/users/me/avatar`;
+    const formData = new FormData();
+    formData.append('avatar', file);
+
+    const token = typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null;
+    
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        ...(token && { Authorization: `Bearer ${token}` }),
+      },
+      body: formData,
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || 'Failed to upload avatar');
+    }
+
+    const data = await response.json();
+    return data.data || data;
+  }
+
   // Address endpoints
   async getAddresses() {
     return this.request('/users/me/addresses');
