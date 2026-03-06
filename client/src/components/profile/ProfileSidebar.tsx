@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 
 interface ProfileSidebarProps {
@@ -10,6 +11,7 @@ interface ProfileSidebarProps {
 
 export default function ProfileSidebar({ activeView, onViewChange }: ProfileSidebarProps) {
   const { user, logout } = useAuth();
+  const router = useRouter();
 
   const handleMenuClick = (id: string) => {
     if (id === 'logout') {
@@ -80,30 +82,55 @@ export default function ProfileSidebar({ activeView, onViewChange }: ProfileSide
   ];
 
   return (
-    <div className="bg-[#FFFFFF] rounded-lg shadow-sm overflow-hidden sticky top-[164px]">
-      {/* Menu Items */}
-      <div className="p-2">
-        {menuItems.map((item) => (
-          <button
-            key={item.id}
-            onClick={() => handleMenuClick(item.id)}
-            className={`w-full flex items-center justify-between px-4 py-3 rounded-md transition-colors ${
-              activeView === item.id
-                ? 'bg-[#FFEDD5] text-[#F97316]'
-                : 'text-[#475569] hover:bg-[#F8FAFC]'
-            }`}
-          >
-            <div className="flex items-center gap-3">
-              {item.icon}
-              <span className="text-sm font-medium">{item.label}</span>
+    <div className="space-y-4">
+      {/* Seller Mode Button */}
+      {user?.role === 'SELLER' && (
+        <button
+          onClick={() => router.push('/seller/products')}
+          className="w-full bg-gradient-to-r from-[#F97316] to-[#EA580C] text-white rounded-lg shadow-md hover:shadow-lg transition-all p-4 flex items-center justify-between group"
+        >
+          <div className="flex items-center gap-3">
+            <div className="bg-white bg-opacity-20 p-2 rounded-lg">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+              </svg>
             </div>
-            {item.badge && (
-              <span className="bg-[#EF4444] text-[#FFFFFF] text-xs px-2 py-0.5 rounded-full">
-                {item.badge}
-              </span>
-            )}
-          </button>
-        ))}
+            <div className="text-left">
+              <p className="font-semibold text-sm">Kênh Người Bán</p>
+              <p className="text-xs opacity-90">Quản lý cửa hàng của bạn</p>
+            </div>
+          </div>
+          <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
+      )}
+
+      <div className="bg-[#FFFFFF] rounded-lg shadow-sm overflow-hidden sticky top-[164px]">
+        {/* Menu Items */}
+        <div className="p-2">
+          {menuItems.map((item) => (
+            <button
+              key={item.id}
+              onClick={() => handleMenuClick(item.id)}
+              className={`w-full flex items-center justify-between px-4 py-3 rounded-md transition-colors ${
+                activeView === item.id
+                  ? 'bg-[#FFEDD5] text-[#F97316]'
+                  : 'text-[#475569] hover:bg-[#F8FAFC]'
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                {item.icon}
+                <span className="text-sm font-medium">{item.label}</span>
+              </div>
+              {item.badge && (
+                <span className="bg-[#EF4444] text-[#FFFFFF] text-xs px-2 py-0.5 rounded-full">
+                  {item.badge}
+                </span>
+              )}
+            </button>
+          ))}
+        </div>
       </div>
     </div>
   );
