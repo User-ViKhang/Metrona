@@ -78,7 +78,30 @@
 
 ---
 
-### 6️⃣ CART - Giỏ hàng
+### 6️⃣ CATEGORY - Danh mục
+
+| Method | Endpoint       | Description        | Auth         
+|--------|----------------|--------------------|-----------        
+| GET    | `/categories`  | Danh sách danh mục | ❌ Public 
+
+**Response Example:**
+```json
+[
+  {
+    "id": "uuid",
+    "name": "Điện thoại",
+    "nameEn": "Phones",
+    "slug": "dien-thoai",
+    "parentId": null,
+    "icon": "phone-icon.svg",
+    "order": 1
+  }
+]
+```
+
+---
+
+### 7️⃣ CART - Giỏ hàng
 
 | Method | Endpoint          | Description            | Auth         
 |--------|-------------------|------------------------|-----------        
@@ -91,7 +114,7 @@
 
 ---
 
-### 7️⃣ ORDER - Đơn hàng (Buyer)
+### 8️⃣ ORDER - Đơn hàng (Buyer)
 
 | Method | Endpoint               | Description                | Auth         
 |--------|------------------------|----------------------------|-----------        
@@ -103,7 +126,7 @@
 
 ---
 
-### 8️⃣ SELLER ORDER - Đơn hàng (Seller)
+### 9️⃣ SELLER ORDER - Đơn hàng (Seller)
 
 | Method | Endpoint                      | Description                 | Auth         
 |--------|-------------------------------|-----------------------------|----------        
@@ -117,7 +140,7 @@
 
 ---
 
-### 9️⃣ CHAT - Nhắn tin
+### 🔟 CHAT - Nhắn tin
 
 | Method | Endpoint              | Description                | Auth         
 |--------|-----------------------|----------------------------|-----------        

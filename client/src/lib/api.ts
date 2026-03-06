@@ -139,31 +139,31 @@ class ApiClient {
 
   // Address endpoints
   async getAddresses() {
-    return this.request('/users/me/addresses');
+    return this.request('/addresses');
   }
 
   async createAddress(data: any) {
-    return this.request('/users/me/addresses', {
+    return this.request('/addresses', {
       method: 'POST',
       body: JSON.stringify(data),
     });
   }
 
   async updateAddress(id: string, data: any) {
-    return this.request(`/users/me/addresses/${id}`, {
+    return this.request(`/addresses/${id}`, {
       method: 'PUT',
       body: JSON.stringify(data),
     });
   }
 
   async setDefaultAddress(id: string) {
-    return this.request(`/users/me/addresses/${id}/default`, {
+    return this.request(`/addresses/${id}/default`, {
       method: 'PATCH',
     });
   }
 
   async deleteAddress(id: string) {
-    return this.request(`/users/me/addresses/${id}`, {
+    return this.request(`/addresses/${id}`, {
       method: 'DELETE',
     });
   }
@@ -200,6 +200,112 @@ class ApiClient {
 
   async getProduct(id: string) {
     return this.request(`/products/${id}`);
+  }
+
+  // Categories endpoints
+  async getCategories() {
+    return this.request('/categories');
+  }
+
+  async getCategoriesForAdmin() {
+    return this.request('/categories/admin');
+  }
+
+  async getCategory(id: string) {
+    return this.request(`/categories/${id}`);
+  }
+
+  async createCategory(data: any) {
+    return this.request('/categories', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async updateCategory(id: string, data: any) {
+    return this.request(`/categories/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async deleteCategory(id: string) {
+    return this.request(`/categories/${id}`, {
+      method: 'DELETE',
+    });
+  }
+
+  // Seller Shop endpoints
+  async updateShop(data: any) {
+    return this.request('/shops/me', {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  }
+
+  // Seller Product endpoints
+  async getMyProducts(params?: any) {
+    const queryString = params ? `?${new URLSearchParams(params)}` : '';
+    return this.request(`/products/me${queryString}`);
+  }
+
+  async createProduct(data: any) {
+    return this.request('/products', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async updateProduct(id: string, data: any) {
+    return this.request(`/products/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async deleteProduct(id: string) {
+    return this.request(`/products/${id}`, {
+      method: 'DELETE',
+    });
+  }
+
+  // Seller Order endpoints
+  async getSellerOrders(params?: any) {
+    const queryString = params ? `?${new URLSearchParams(params)}` : '';
+    return this.request(`/seller/orders${queryString}`);
+  }
+
+  async getSellerOrderById(id: string) {
+    return this.request(`/seller/orders/${id}`);
+  }
+
+  async getSellerOrderStats() {
+    return this.request('/seller/orders/stats');
+  }
+
+  async confirmOrder(id: string) {
+    return this.request(`/seller/orders/${id}/confirm`, {
+      method: 'PATCH',
+    });
+  }
+
+  async shipOrder(id: string) {
+    return this.request(`/seller/orders/${id}/ship`, {
+      method: 'PATCH',
+    });
+  }
+
+  async deliverOrder(id: string) {
+    return this.request(`/seller/orders/${id}/deliver`, {
+      method: 'PATCH',
+    });
+  }
+
+  async cancelSellerOrder(id: string, reason: string) {
+    return this.request(`/seller/orders/${id}/cancel`, {
+      method: 'PATCH',
+      body: JSON.stringify({ reason }),
+    });
   }
 }
 

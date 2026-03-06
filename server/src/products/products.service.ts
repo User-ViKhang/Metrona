@@ -296,8 +296,12 @@ export class ProductsService {
         where: { shopId: shop.id },
         include: {
           images: {
-            take: 1,
             orderBy: { order: 'asc' },
+          },
+          categories: {
+            include: {
+              category: true,
+            },
           },
         },
         skip,
